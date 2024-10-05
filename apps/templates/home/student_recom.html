@@ -1,0 +1,82 @@
+{% extends 'layouts/student_base.html' %}
+
+{% block title %} Book Recommendations {% endblock title %}
+
+{% block content %}
+
+    <!-- Header -->
+    <div class="header bg-primary pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <h6 class="h2 text-white d-inline-block mb-0">Book Recommendations</h6>
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                                <li class="breadcrumb-item"><a href="#">Library</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Recommendations</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row" id="recommendations">
+            <!-- Example Recommended Book Cards -->
+            <div class="col-lg-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body text-center">
+                        <img src="https://via.placeholder.com/150" class="img-fluid mb-3" alt="Book Image">
+                        <h5 class="card-title">Clean Code</h5>
+                        <p class="card-text">
+                            <strong>Author:</strong> Robert C. Martin<br>
+                            <strong>Category:</strong> Programming<br>
+                            <strong>Recommendation Reason:</strong> Essential for writing clean and maintainable code.
+                        </p>
+                        <a href="#" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body text-center">
+                        <img src="https://via.placeholder.com/150" class="img-fluid mb-3" alt="Book Image">
+                        <h5 class="card-title">Python Crash Course</h5>
+                        <p class="card-text">
+                            <strong>Author:</strong> Eric Matthes<br>
+                            <strong>Category:</strong> Programming<br>
+                            <strong>Recommendation Reason:</strong> A fast-paced introduction to programming in Python.
+                        </p>
+                        <a href="#" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body text-center">
+                        <img src="https://via.placeholder.com/150" class="img-fluid mb-3" alt="Book Image">
+                        <h5 class="card-title">Artificial Intelligence: A Modern Approach</h5>
+                        <p class="card-text">
+                            <strong>Author:</strong> Stuart Russell<br>
+                            <strong>Category:</strong> AI<br>
+                            <strong>Recommendation Reason:</strong> Comprehensive guide to AI concepts and techniques.
+                        </p>
+                        <a href="#" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {% include "includes/footer.html" %}
+
+    </div>
+
+{% endblock content %}

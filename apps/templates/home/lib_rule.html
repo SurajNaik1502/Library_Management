@@ -1,0 +1,53 @@
+{% extends 'layouts/student_base.html' %}
+
+{% block title %} Library Rules {% endblock title %}
+
+{% block content %}
+
+    <!-- Header -->
+    <div class="header bg-primary pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <h6 class="h2 text-white d-inline-block mb-0">Library Rules</h6>
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                                <li class="breadcrumb-item"><a href="#">Library</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Rules</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Library Rules and Regulations</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">1. All library users must present their library card upon entry.</li>
+                            <li class="list-group-item">2. Silence must be maintained in all library areas.</li>
+                            <li class="list-group-item">3. Food and beverages are not allowed inside the library.</li>
+                            <li class="list-group-item">4. Users are responsible for any materials borrowed and must return them on time.</li>
+                            <li class="list-group-item">5. Personal items should be stored in designated areas; bags are not allowed in the reading areas.</li>
+                            <li class="list-group-item">6. Users must respect the privacy of others and refrain from disruptive behavior.</li>
+                            <li class="list-group-item">7. Report any damages or issues with library materials to staff immediately.</li>
+                            <li class="list-group-item">8. Violations of library rules may result in the suspension of library privileges.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% include "includes/footer.html" %}
+
+    </div>
+
+{% endblock content %}

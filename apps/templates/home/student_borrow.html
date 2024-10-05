@@ -1,0 +1,85 @@
+{% extends 'layouts/student_base.html' %}
+
+{% block title %} Borrowed Books {% endblock title %}
+
+{% block content %}
+
+    <!-- Header -->
+    <div class="header bg-primary pb-6">
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <h6 class="h2 text-white d-inline-block mb-0">Borrowed Books</h6>
+                        <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                                <li class="breadcrumb-item"><a href="#">Library</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Borrowed Books</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page content -->
+    <div class="container-fluid mt--6">
+        <div class="row" id="borrowedBooks">
+            <!-- Example Borrowed Book Cards -->
+            <div class="col-lg-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body text-center">
+                        <img src="https://via.placeholder.com/150" class="img-fluid mb-3" alt="Book Image">
+                        <h5 class="card-title">The Great Gatsby</h5>
+                        <p class="card-text">
+                            <strong>Author:</strong> F. Scott Fitzgerald<br>
+                            <strong>Borrowed On:</strong> Sept 20, 2024<br>
+                            <strong>Due Date:</strong> Oct 20, 2024<br>
+                            <strong>Status:</strong> <span class="text-success">On Time</span>
+                        </p>
+                        <a href="#" class="btn btn-primary">Renew</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body text-center">
+                        <img src="https://via.placeholder.com/150" class="img-fluid mb-3" alt="Book Image">
+                        <h5 class="card-title">To Kill a Mockingbird</h5>
+                        <p class="card-text">
+                            <strong>Author:</strong> Harper Lee<br>
+                            <strong>Borrowed On:</strong> Sept 10, 2024<br>
+                            <strong>Due Date:</strong> Oct 10, 2024<br>
+                            <strong>Status:</strong> <span class="text-danger">Overdue</span>
+                        </p>
+                        <a href="#" class="btn btn-danger">Return</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body text-center">
+                        <img src="https://via.placeholder.com/150" class="img-fluid mb-3" alt="Book Image">
+                        <h5 class="card-title">1984</h5>
+                        <p class="card-text">
+                            <strong>Author:</strong> George Orwell<br>
+                            <strong>Borrowed On:</strong> Sept 15, 2024<br>
+                            <strong>Due Date:</strong> Oct 15, 2024<br>
+                            <strong>Status:</strong> <span class="text-warning">Due Soon</span>
+                        </p>
+                        <a href="#" class="btn btn-primary">Renew</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {% include "includes/footer.html" %}
+
+    </div>
+
+{% endblock content %}
