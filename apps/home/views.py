@@ -42,3 +42,28 @@ def pages(request):
     except:
         html_template = loader.get_template('home/page-500.html')
         return HttpResponse(html_template.render(context, request))
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .recommender import CollaborativeFilteringRecommender, load_data
+
+@login_required
+def recommend_books(request):
+    user_id = request.user.id  # Assuming you have user_id mapping to Django's User model
+
+    # Load data
+    books_df, interactions_df, users_df = load_data()
+
+    # Instantiate the recommender system
+    recommender = CollaborativeFilteringRecommender(interactions_df)
+
+    # Get recommendations for the logged-in user
+    recommended_books = recommender.get_recommendations(user_id=user_id, top_n=5)
+
+    # Pass the recommendations to the template
+    context = {
+        'recommended_books': recommended_books,
+    }
+
+    return render(request, 'myapp/recommend_books.html', context)

@@ -1,0 +1,4 @@
+user_id,book_id,rating
+U001,B001,4.5
+U002,B002,5.0
+U001,B002,4.0
