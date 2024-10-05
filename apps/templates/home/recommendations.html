@@ -1,0 +1,15 @@
+<!-- templates/recommendations.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Recommended Books</h2>
+{% if books %}
+    <ul>
+        {% for book in books %}
+            <li>{{ book.title }} ({{ book.category }})</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No recommendations available at the moment.</p>
+{% endif %}
+{% endblock %}
