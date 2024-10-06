@@ -12,7 +12,8 @@ urlpatterns = [
     path('', views.index, name='home'),
     path('recommend/', views.recommend_books, name='recommend_books'),
     # Matches any html file
-    re_path(r'^.*\.*', views.pages, name='pages'),
+    
 
-
+    path('book-search/', views.book_search, name='book_search'),
+    path('find-location/', views.find_book_location, name='book_location'),
 ]
