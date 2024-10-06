@@ -18,6 +18,8 @@ class Book(models.Model):
     tax = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     url = models.URLField(max_length=255)
 
+    combined_features = models.TextField(blank=True, null=True)
+
     def __str__(self):
         return self.title
 
@@ -31,17 +33,25 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
-# BookCheckout Model
+import uuid
+from django.core.exceptions import ValidationError
+from django.db import models
+
 class BookCheckout(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="checkouts")
-    book_id = models.CharField(max_length=10)  # Ensure this is CharField if you're using non-UUIDs
-    return_status = models.CharField(max_length=20)  # Return status
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, blank=True, null=True)
+    return_status = models.CharField(max_length=20, default="Not Returned",)
 
     class Meta:
-        unique_together = ('user', 'book_id')  # Ensure unique combinations of user and book_id
+        unique_together = ('user', 'book')
+
+    def clean(self):
+        # Ensure that the book exists in the Book table
+        if self.book is not None and not Book.objects.filter(book_id=self.book.book_id).exists():
+            raise ValidationError(f"Book with id {self.book.book_id} does not exist.")
 
     def __str__(self):
-        return f"User {self.user.user_name} - Book {self.book_id} ({self.return_status})"
+        return f"User '{self.user.user.username}' - Book '{self.book.title}' ({self.return_status})"
 
 
 # Interaction Model
