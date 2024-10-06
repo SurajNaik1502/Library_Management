@@ -24,6 +24,13 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
+class BookTest(models.Model):
+    book_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    title = models.CharField(max_length=255)
+    category = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    barcode = models.CharField(max_length=50, unique=True)
+    location = models.IntegerField(default=0)
 # UserProfile extending Django's User model
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

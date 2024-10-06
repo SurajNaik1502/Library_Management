@@ -5,9 +5,17 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django import template
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import loader
 from django.urls import reverse
+from django.shortcuts import render, get_object_or_404
+from apps.home.models import BookTest
+from django.conf import settings
+import os
+from .forms import BookLocationForm
+
+# Consolidate the imports
+from .recommender import CollaborativeFilteringRecommender, load_data
 
 
 @login_required(login_url="/login/")
@@ -21,10 +29,7 @@ def index(request):
 @login_required(login_url="/login/")
 def pages(request):
     context = {}
-    # All resource paths end in .html.
-    # Pick out the html file name from the url. And load that template.
     try:
-
         load_template = request.path.split('/')[-1]
 
         if load_template == 'admin':
@@ -35,7 +40,6 @@ def pages(request):
         return HttpResponse(html_template.render(context, request))
 
     except template.TemplateDoesNotExist:
-
         html_template = loader.get_template('home/page-404.html')
         return HttpResponse(html_template.render(context, request))
 
@@ -45,10 +49,23 @@ def pages(request):
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+
 from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from .models import Book
+
+from .recommender import CollaborativeFilteringRecommender, load_data
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
+from scipy.sparse import csr_matrix
+import os
+from django.conf import settings
+import requests
+from bs4 import BeautifulSoup
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from .recommender import CollaborativeFilteringRecommender, load_data
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -109,6 +126,11 @@ from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt  # Import csrf_exempt
 from .models import Book
+
+
+@login_required
+def recommend_books(request):
+    user_id = request.user.id  # Assuming user_id is mapped to Django's User model
 
 @csrf_exempt  # Disable CSRF protection for this view
 def dialogflow_webhook(request):
@@ -224,3 +246,54 @@ def chat_bot(request):
 
 def scanner(request):
     return render(request, 'ISBN-Barcode-Scanner/index.html')
+
+    return render(request, 'home/recommend_books.html', context)
+
+def fetch_image_url(book_url):
+    """
+    Fetch the book cover image URL from the book's page.
+    """
+    try:
+        response = requests.get(book_url)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        image_element = soup.find('img', class_='thumbnail')
+        if image_element:
+            image_url = 'http://books.toscrape.com/' + image_element['src']
+            return image_url
+    except Exception as e:
+        print(f"Error fetching image URL: {e}")
+    return None
+
+    return render(request, 'myapp/recommend_books.html', context)
+
+
+def book_search(request):
+    if request.is_ajax():
+        query = request.GET.get('q', '')
+        books = BookTest.objects.filter(title__icontains=query)[:10]  # Limit to 10 suggestions
+        results = [{'title': book.title} for book in books]
+        return JsonResponse(results, safe=False)
+
+# View to find book location based on user input
+def find_book_location(request):
+    if request.method == 'POST':
+        nearest_shelf = request.POST.get('shelf_number')
+        book_name = request.POST.get('book_name')
+
+        try:
+            # Fetch book based on user input
+            book = BookTest.objects.get(title=book_name)
+            book_location = book.location  # Assuming location is stored in this field
+            context = {
+                'nearest_shelf': nearest_shelf,
+                'book_location': book_location,
+                'book': book,
+            }
+            return render(request, 'home/book_location_result.html', context)
+        except BookTest.DoesNotExist:
+            # Handle case where book is not found
+            return render(request, 'home/book_location_result.html', {'error': 'Book not found'})
+
+    # Render the form initially
+    return render(request, 'home/book_location_form.html')
+

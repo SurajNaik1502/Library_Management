@@ -1,0 +1,129 @@
+{% extends 'layouts/student_base.html' %}
+
+{% block title %} Library Search {% endblock title %}
+
+{% block content %}
+<style>
+    /* Styling the select box */
+    .select2-container--custom .select2-selection {
+        background-color: #f4f4f9;
+        border: 1px solid #ced4da;
+        padding: 5px;
+        height: 50px;
+        border-radius: 4px;
+        font-size: small;
+    }
+
+    /* Styling the dropdown menu */
+    .select2-container--custom .select2-results {
+        background-color: #fff;
+        color: #495057;
+    }
+
+    /* Option styling */
+    .select2-container--custom .select2-results__option {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    /* Hover and selected option */
+    .select2-container--custom .select2-results__option--highlighted,
+    .select2-container--custom .select2-results__option[aria-selected=true] {
+        background-color: #007bff;
+        color: #fff;
+    }
+</style>
+
+<!-- Header -->
+<div class="header bg-primary pb-6">
+    <div class="container-fluid">
+        <div class="header-body">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">Book Search</h6>
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                            <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                            <li class="breadcrumb-item"><a href="#">Library</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Search</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-lg-6 col-5 text-right">
+                    <a href="#" class="btn btn-sm btn-neutral">New</a>
+                    <a href="#" class="btn btn-sm btn-neutral">Filters</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page content -->
+<div class="container-fluid mt--6">
+    <!-- Book Location Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Find Book Location</h5>
+
+                    <form method="POST" action="{% url 'book_location' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="shelf">Nearest Shelf Number:</label>
+                            <input type="text" id="shelf" name="shelf_number" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="book">Enter Book Name:</label>
+                            <select id="book" name="book_name" class="form-control" style="width: 100%;">
+                                <option></option> <!-- Dynamic book options will be added here -->
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Find Book Location</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include "includes/footer.html" %}
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Include Select2 CSS and JS for dynamic search dropdown -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- Initialize Select2 for dynamic book search -->
+<script>
+    $('#book').select2({
+        ajax: {
+            url: "{% url 'book_search' %}",  // Backend URL for book search
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function(item) {
+                        return {
+                            id: item.title,
+                            text: item.title
+                        };
+                    })
+                };
+            },
+            cache: true
+        },
+        placeholder: '',
+        minimumInputLength: 1,
+        dropdownCssClass: 'select2-container--custom',  // Apply the custom dropdown styles
+        selectionCssClass: 'select2-container--custom', // Apply the custom selection styles
+    });
+</script>
+{% endblock javascripts %}

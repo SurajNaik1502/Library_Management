@@ -16,7 +16,8 @@ urlpatterns = [
     path('scanner/',views.scanner,  name='scanner'),
 
     # Matches any html file
-    re_path(r'^.*\.*', views.pages, name='pages'),
+    
 
-
+    path('book-search/', views.book_search, name='book_search'),
+    path('find-location/', views.find_book_location, name='book_location'),
 ]

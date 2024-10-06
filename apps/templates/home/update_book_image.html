@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Location</title>
+</head>
+<body>
+    <h1>Book Location Finder</h1>
+
+    <h2>First Book: {{ first_book.title }}</h2>
+    <p>Location of the first book: {{ location1 }}</p>
+
+    <hr>
+
+    <h2>Find the Location of the Second Book</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Get Location</button>
+    </form>
+
+    {% if second_book %}
+        <h2>Second Book: {{ second_book.title }}</h2>
+        <p>Location of the second book: {{ location2 }}</p>
+    {% endif %}
+
+    {% if error_message %}
+        <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+</body>
+</html>
