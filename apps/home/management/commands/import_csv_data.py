@@ -26,14 +26,14 @@ class Command(BaseCommand):
                         'title': row['title'],
                         'category': row['category'],
                         'description': row['description'],
-                        'availability': row['availability'],
-                        'num_reviews': row['num_reviews'],
-                        'price': row['price'],
-                        'price_excl_tax': row['price_excl_tax'],
-                        'price_incl_tax': row['price_incl_tax'],
+                        'availability': int(row['availability']),  # Convert to int
+                        'num_reviews': int(row['num_reviews']),  # Convert to int
+                        'price': float(row['price']),  # Convert to float
+                        'price_excl_tax': float(row['price_excl_tax']),  # Convert to float
+                        'price_incl_tax': float(row['price_incl_tax']),  # Convert to float
                         'product_type': row['product_type'],
-                        'stars': row['stars'],
-                        'tax': row['tax'],
+                        'stars': int(row['stars']),  # Convert to int
+                        'tax': float(row['tax']),  # Convert to float
                         'url': row['url']
                     }
                 )

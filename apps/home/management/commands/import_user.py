@@ -1,7 +1,7 @@
 import csv
-from django.contrib.auth.models import User  # Import Django's built-in User model
 from django.core.management.base import BaseCommand
-from apps.home.models import UserProfile, BookCheckout, Book
+from apps.home.models import UserProfile, BookCheckout, Book, User
+from django.utils import timezone
 
 class Command(BaseCommand):
     help = "Load user and checkout data from CSV file into the database"
@@ -12,13 +12,16 @@ class Command(BaseCommand):
             headers = reader.fieldnames
             self.stdout.write(self.style.WARNING(f"CSV Headers: {headers}"))
 
+            # Create a mapping from book_id (e.g., 'B488') to actual UUIDs
+            book_mapping = {book.book_id: book.id for book in Book.objects.all()}
+
             for row in reader:
-                # Create or get User (Django's built-in User model)
                 user, created = User.objects.get_or_create(
-                    username=row['user_name'],  # or use email or other unique fields
+                    username=row['user_name'],
                     defaults={
-                        'first_name': row['user_name'],  # Optionally add first_name or other fields
-                        'email': f"{row['user_name']}@example.com",  # Dummy email, change as necessary
+                        'first_name': row['user_name'],
+                        'email': f"{row['user_name']}@example.com",
+                        'last_login': timezone.now(),
                     }
                 )
 
@@ -27,13 +30,12 @@ class Command(BaseCommand):
                 else:
                     self.stdout.write(self.style.WARNING(f"User '{user.username}' already exists"))
 
-                # Now create or get the UserProfile
                 user_profile, profile_created = UserProfile.objects.get_or_create(
-                    user=user,  # Link the UserProfile to the newly created or existing User
-                    custom_user_id=row['user_id'],  # Use the custom_user_id from CSV
+                    user=user,
+                    custom_user_id=row['user_id'],
                     defaults={
-                        'mobile_no': '',  # Add relevant fields if any
-                        'address': ''  # Add relevant fields if any
+                        'mobile_no': '',  
+                        'address': ''  
                     }
                 )
 
@@ -42,21 +44,30 @@ class Command(BaseCommand):
                 else:
                     self.stdout.write(self.style.WARNING(f"UserProfile for '{user.username}' already exists"))
 
-                # Process past checkouts and return patterns
                 checkouts = row['past_checkouts'].split(', ')
                 return_patterns = row['return_patterns'].split(', ')
 
                 for checkout, pattern in zip(checkouts, return_patterns):
-                    book_id, status = pattern.split(':')
-                    
-                    # Ensure the book_id is valid (if it references a UUID, adjust accordingly)
-                    if book_id.startswith('B'):  # Example check, modify as per your logic
-                        # Proceed to create the BookCheckout with the book_id
-                        BookCheckout.objects.get_or_create(
+                    checkout = checkout.strip()  # Clean up
+                    status = pattern.split(':')[1].strip()  # Get return status and clean
+
+                    # Get the UUID from the book mapping
+                    book_id = book_mapping.get(checkout)
+                    if book_id is None:
+                        self.stdout.write(self.style.ERROR(f"Book with ID '{checkout}' not found in database."))
+                        continue
+
+                    # Proceed to create the BookCheckout entry
+                    try:
+                        book_checkout, created = BookCheckout.objects.get_or_create(
                             user=user_profile,
-                            book_id=checkout,  # This should match your defined CharField
+                            book_id=book_id,
                             defaults={'return_status': status}
                         )
-                        self.stdout.write(self.style.SUCCESS(f"Book '{checkout}' with return status '{status}' added for user '{user_profile.user.username}'"))
-                    else:
-                        self.stdout.write(self.style.ERROR(f"'{book_id}' is not a valid book ID."))
+                        if created:
+                            self.stdout.write(self.style.SUCCESS(f"Checkout created for book ID '{checkout}' with status '{status}'"))
+                        else:
+                            self.stdout.write(self.style.WARNING(f"Checkout already exists for book ID '{checkout}'"))
+
+                    except Exception as e:
+                        self.stdout.write(self.style.ERROR(f"An error occurred: {e}"))
