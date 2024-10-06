@@ -65,7 +65,7 @@ def load_data():
     # Define paths to your CSV files using Django's settings
     books_file_path = os.path.join(settings.MEDIA_ROOT, 'books_updated.csv')
     interactions_file_path = os.path.join(settings.MEDIA_ROOT, 'interactions.csv')
-    users_file_path = os.path.join(settings.MEDIA_ROOT, 'users.csv')
+    users_file_path = os.path.join(settings.MEDIA_ROOT, 'users_data.csv')
 
     # Load CSV files into dataframes
     books_df = pd.read_csv(books_file_path)

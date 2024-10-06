@@ -19,6 +19,7 @@ class Book(models.Model):
     url = models.URLField(max_length=255)
 
     combined_features = models.TextField(blank=True, null=True)
+    
 
     def __str__(self):
         return self.title
