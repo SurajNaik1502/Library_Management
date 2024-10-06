@@ -1,0 +1,26 @@
+
+
+{% extends 'layouts/student_base.html' %}
+
+{% block title %} Dashboard {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<iframe width="1350" height="740" allow="microphone;" src="https://console.dialogflow.com/api-client/demo/embedded/88cf7e65-583a-4a8e-9398-6df8a55c9567" style="margin-left:20"></iframe>
+        {% include "includes/footer.html" %}
+      </div>
+      
+
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+
+  <script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
+  <script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+
+{% endblock javascripts %}

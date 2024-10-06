@@ -36,18 +36,25 @@
                 <span class="nav-link-text">My Borrowed Books</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link {% if 'tables' in segment %} active {% endif %}" href="/home/student_recom.html">
-                <i class="fas fa-star text-yellow"></i> <!-- Changed icon -->
-                <span class="nav-link-text">Recommendations</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% if 'tables' in segment %} active {% endif %}" href="/home/lib_rule.html">
-                <i class="fas fa-gavel text-pink"></i> <!-- Changed icon -->
-                <span class="nav-link-text">Library Rules</span>
-              </a>
-            </li>
+              <li class="nav-item">
+                  <a class="nav-link {% if 'recommendations' in segment %} active {% endif %}" href="/home/recommendations.html">
+                      <i class="fas fa-star text-primary"></i> <!-- Recommendation icon -->
+                      <span class="nav-link-text">Recommendations</span>
+                  </a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link {% if 'lib_rule' in segment %} active {% endif %}" href="/home/lib_rule.html">
+                      <i class="fas fa-gavel text-pink"></i> <!-- Changed icon -->
+                      <span class="nav-link-text">Library Rules</span>
+                  </a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link {% if 'chatbot' in segment %} active {% endif %}" href="/home/chatbot.html">
+                      <i class="fas fa-comments text-info"></i> <!-- Chat icon -->
+                      <span class="nav-link-text">Chat ISAN</span>
+                  </a>
+              </li>
+          
             <li class="nav-item">
               <a class="nav-link" href="{% url 'logout' %}">
                 <i class="fas fa-sign-out-alt text-red"></i>

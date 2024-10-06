@@ -51,28 +51,12 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Book
 from .recommender import CollaborativeFilteringRecommender, load_data
 
-# Recommender System View
-@login_required
-def recommend_books(request):
-    user_id = request.user.id  # Assuming you have user_id mapping to Django's User model
+import difflib  # Import difflib for finding close matches
+from django.http import JsonResponse
+import json
+from django.views.decorators.csrf import csrf_exempt  # Import csrf_exempt
+from .models import Book
 
-    # Load data
-    books_df, interactions_df, users_df = load_data()
-
-    # Instantiate the recommender system
-    recommender = CollaborativeFilteringRecommender(interactions_df)
-
-    # Get recommendations for the logged-in user
-    recommended_books = recommender.get_recommendations(user_id=user_id, top_n=5)
-
-    # Pass the recommendations to the template
-    context = {
-        'recommended_books': recommended_books,
-    }
-
-    return render(request, 'myapp/recommend_books.html', context)
-
-# Dialogflow Webhook View
 @csrf_exempt  # Disable CSRF protection for this view
 def dialogflow_webhook(request):
     if request.method == 'POST':
@@ -89,9 +73,14 @@ def dialogflow_webhook(request):
         print("Extracted Intent:", intent)
         print("Extracted Parameters:", parameters)
 
+        # Ensure book_title is extracted properly
+        book_title = parameters.get('book_title', None)  # Default to None if not found
+        if not book_title:  # If no book title was provided
+            response_text = "I couldn't understand the book title. Could you please repeat it?"
+            return JsonResponse({"fulfillmentText": response_text})
+
         # Handle Provide Book Details Intent
         if intent == 'Provide Book Details Intent':
-            book_title = parameters.get('book_title')
             print(f"Book title extracted: {book_title}")
             
             try:
@@ -104,11 +93,15 @@ def dialogflow_webhook(request):
                 else:
                     response_text = f"Sorry, the book '{book_title}' is currently not available."
             except Book.DoesNotExist:
-                response_text = f"Sorry, we don't have the book '{book_title}' in our library."
+                # Find similar books
+                similar_books = Book.objects.values_list('title', flat=True)
+                matching_books = difflib.get_close_matches(book_title, similar_books, n=3, cutoff=0.6)  # Adjust cutoff as needed
+                suggestions = ', '.join(matching_books) if matching_books else "No suggestions available."
+                response_text = f"Sorry, we don't have the book '{book_title}' in our library. Did you mean: {suggestions}?"
 
         # Handle Borrow Book Intent
         elif intent == 'Borrow Book Intent':
-            book_title = parameters.get('book_title')
+            print(f"Book title extracted: {book_title}")
 
             try:
                 book = Book.objects.get(title__iexact=book_title)
@@ -117,22 +110,38 @@ def dialogflow_webhook(request):
                     book.save()  # Save the updated availability
                     response_text = f"You've successfully borrowed '{book_title}'."
                 else:
-                    response_text = f"Sorry, '{book_title}' is currently out of stock."
+                    # Find similar books
+                    similar_books = Book.objects.values_list('title', flat=True)
+                    matching_books = difflib.get_close_matches(book_title, similar_books, n=3, cutoff=0.6)
+                    suggestions = ', '.join(matching_books) if matching_books else "No suggestions available."
+                    response_text = f"Sorry, '{book_title}' is currently out of stock. Did you mean: {suggestions}?"
             except Book.DoesNotExist:
-                response_text = f"Sorry, we don't have the book '{book_title}' in our library."
+                # Find similar books
+                similar_books = Book.objects.values_list('title', flat=True)
+                matching_books = difflib.get_close_matches(book_title, similar_books, n=3, cutoff=0.6)
+                suggestions = ', '.join(matching_books) if matching_books else "No suggestions available."
+                response_text = f"Sorry, we don't have the book '{book_title}' in our library. Did you mean: {suggestions}?"
 
         # Handle Check Availability Intent
         elif intent == 'Check Availability Intent':
-            book_title = parameters.get('book_title')
+            print(f"Book title extracted: {book_title}")
 
             try:
                 book = Book.objects.get(title__iexact=book_title)
                 if book.availability > 0:
                     response_text = f"The book '{book_title}' is available for borrowing."
                 else:
-                    response_text = f"Sorry, '{book_title}' is currently out of stock."
+                    # Find similar books
+                    similar_books = Book.objects.values_list('title', flat=True)
+                    matching_books = difflib.get_close_matches(book_title, similar_books, n=3, cutoff=0.6)
+                    suggestions = ', '.join(matching_books) if matching_books else "No suggestions available."
+                    response_text = f"Sorry, '{book_title}' is currently out of stock. Did you mean: {suggestions}?"
             except Book.DoesNotExist:
-                response_text = f"Sorry, we don't have the book '{book_title}' in our library."
+                # Find similar books
+                similar_books = Book.objects.values_list('title', flat=True)
+                matching_books = difflib.get_close_matches(book_title, similar_books, n=3, cutoff=0.6)
+                suggestions = ', '.join(matching_books) if matching_books else "No suggestions available."
+                response_text = f"Sorry, we don't have the book '{book_title}' in our library. Did you mean: {suggestions}?"
 
         # Handle Default Welcome Intent
         elif intent == 'Default Welcome Intent':
@@ -152,3 +161,13 @@ def dialogflow_webhook(request):
     else:
         print("Invalid request method:", request.method)
         return JsonResponse({"error": "Invalid request method. Only POST allowed."}, status=405)
+
+
+from django.shortcuts import render
+
+# View to render the chatbot page
+def chat_bot(request):
+    return render(request, 'home/chatbot.html')
+
+def scanner(request):
+    return render(request, 'ISBN-Barcode-Scanner/index.html')
