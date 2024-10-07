@@ -1,2 +1,22 @@
 
 *.pyc
+*.pyc
+
+
+# venv
+/env
+/venv
+
+# other
+.DS_Store
+
+# javascript
+package-lock.json
+
+!staticfiles/.gitkeep 
+.vscode/symbols.json
+
+apps/static/assets/node_modules
+apps/static/assets/yarn.lock
+apps/static/assets/.temp
+
